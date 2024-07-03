@@ -12,7 +12,7 @@ import {
 // length unit is pt (1/72 inch, ~ 0.35 mm)
 
 const params = {
-  MAX_LEVELS: 2,
+  MAX_LEVELS: 3,
 
   TOL_BIN_SIZE: 3, // tolerance of alignment
   TOL_JOIN_SPAN: 24, // tolerance of joining spans with same style on same line
@@ -226,6 +226,47 @@ function findColumns(pageDicts: Array<PageDict>): Array<Column> {
   return columns
 }
 
+function passSpanFilters(span: MySpan, filters: { [key: string]: Function }) {
+  for (const [name, filter] of Object.entries(filters)) {
+    if (filter(span)) {
+      return false
+    }
+  }
+  return true
+}
+
+function filterSpansPre(styleGroups, columns) {
+  const xLeft = columns.map((col) => col.x0).reduce((a, b) => Math.min(a, b))
+  const xRight = columns.map((col) => col.x1).reduce((a, b) => Math.max(a, b))
+  const yTop = columns.map((col) => col.y0).reduce((a, b) => Math.min(a, b))
+  const yBottom = columns.map((col) => col.y1).reduce((a, b) => Math.max(a, b))
+  logger.info(`main box x=[${xLeft},${xRight}] y=[${yTop},${yBottom}]`)
+  const spanFilters = {
+    spanInMargin: function (span) {
+      return (
+        span.x < xLeft - params.TOL_BIN_SIZE ||
+        span.x + span.w > xRight + params.TOL_BIN_SIZE ||
+        span.y < yTop - params.TOL_BIN_SIZE ||
+        span.y + span.h > yBottom + params.TOL_BIN_SIZE
+      )
+    },
+  }
+  for (const [style, spans] of styleGroups) {
+    const filteredSpans = spans.filter((span) =>
+      passSpanFilters(span, spanFilters)
+    )
+    if (filteredSpans.length < spans.length) {
+      logger.debug(
+        `Pre-filtered ${style} from ${spans.length} to ${filteredSpans.length}`
+      )
+      styleGroups.set(
+        style,
+        spans.filter((span) => passSpanFilters(span, spanFilters))
+      )
+    }
+  }
+}
+
 function findAlignedGroups(styleGroups: StyleGroups, columns) {
   const alignedBinsLeft = columns.map((col) => col.xLeftBin)
   const alignedBinsMid = columns.map((col) => col.xMidBin)
@@ -275,13 +316,13 @@ function findAlignedGroups(styleGroups: StyleGroups, columns) {
           (span, i) => leftDists[i] === dLeftMode || midDists[i] === dMidMode
         )
       )
-      // logger.debug(
-      //   `Style ${style}  ${
-      //     outlineGroups.get(style).length
-      //   } spans, align l=${leftAlignedRatio.toFixed(
-      //     2
-      //   )} m=${midAlignedRatio.toFixed(2)}`
-      // )
+      logger.debug(
+        `Style ${style}  ${
+          outlineGroups.get(style).length
+        } spans, align l=${leftAlignedRatio.toFixed(
+          2
+        )} m=${midAlignedRatio.toFixed(2)}`
+      )
     }
   }
 
@@ -420,7 +461,8 @@ function _splitInlineGroups(outlineGroups, pageDicts) {
       } else {
         let isInline = false
         for (const blockSpan of block.spans) {
-          if (blockSpan.iSpan !== span.iSpan &&
+          if (
+            blockSpan.iSpan !== span.iSpan &&
             Math.abs(blockSpan.y - span.y) < params.TOL_BIN_SIZE
           ) {
             inlineSpans.push(span)
@@ -459,13 +501,7 @@ function processStyleGroups(outlineGroups, pageDicts) {
   _splitAllCapGroups(outlineGroups)
 }
 
-function filterSpans(outlineGroups, pageDicts, columns) {
-  const xLeft = columns.map((col) => col.x0).reduce((a, b) => Math.min(a, b))
-  const xRight = columns.map((col) => col.x1).reduce((a, b) => Math.max(a, b))
-  const yTop = columns.map((col) => col.y0).reduce((a, b) => Math.min(a, b))
-  const yBottom = columns.map((col) => col.y1).reduce((a, b) => Math.max(a, b))
-  logger.info(`main box x=[${xLeft},${xRight}] y=[${yTop},${yBottom}]`)
-
+function filterSpansPost(outlineGroups, pageDicts, columns) {
   const spanFilters = {
     spanNotAtBeginnig: function (span) {
       // false positive when inline heading is in the middle of a block
@@ -476,28 +512,12 @@ function filterSpans(outlineGroups, pageDicts, columns) {
       const block = pageDicts[span.iPage].blocks[span.iBlock]
       return span.styleStr === block.mainStyleStr && block.nLines > MAX_LINES
     },
-    spanInMargin: function (span) {
-      return (
-        span.x < xLeft - params.TOL_BIN_SIZE ||
-        span.x + span.w > xRight + params.TOL_BIN_SIZE ||
-        span.y < yTop - params.TOL_BIN_SIZE ||
-        span.y + span.h > yBottom + params.TOL_BIN_SIZE
-      )
-    },
-  }
-  function passFilters(span: MySpan, filters: { [key: string]: Function }) {
-    for (const [name, filter] of Object.entries(filters)) {
-      if (filter(span)) {
-        return false
-      }
-    }
-    return true
   }
   const nPre = outlineGroups.size
   for (const [style, spans] of outlineGroups) {
     outlineGroups.set(
       style,
-      spans.filter((span) => passFilters(span, spanFilters))
+      spans.filter((span) => passSpanFilters(span, spanFilters))
     )
     if (outlineGroups.get(style).length < params.FILTER_MIN_SPANS_PER_GROUP) {
       outlineGroups.delete(style)
@@ -579,6 +599,9 @@ function findOutline(doc) {
   const styleGroups = groupTextByStyle(pageDicts)
 
   const columns = findColumns(pageDicts)
+
+  filterSpansPre(styleGroups, columns)
+
   const [outlineGroups, alignmentScores] = findAlignedGroups(
     styleGroups,
     columns
@@ -587,7 +610,7 @@ function findOutline(doc) {
   filterGroups(outlineGroups, pageDicts, alignmentScores)
   processStyleGroups(outlineGroups, pageDicts)
 
-  filterSpans(outlineGroups, pageDicts, columns)
+  filterSpansPost(outlineGroups, pageDicts, columns)
 
   const outline = structureOutline(outlineGroups)
   return outline
