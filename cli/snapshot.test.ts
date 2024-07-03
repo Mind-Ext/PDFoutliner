@@ -4,7 +4,7 @@ import * as mupdf from '../mupdf/mupdf.js'
 import { findOutline } from '../shared/algo.ts'
 import { outlineToStr } from '../shared/util.ts'
 
-export function snapshotTest(testFileDir = '../example') {
+function snapshotTest(testFileDir = '../example') {
   for (const file of fs.readdirSync(testFileDir)) {
     if (file.endsWith('.txt') || file.endsWith('_outlined.pdf')) continue
     const filePath = `${testFileDir}/${file}`

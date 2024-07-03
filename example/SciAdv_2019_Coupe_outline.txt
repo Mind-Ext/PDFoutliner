@@ -1,6 +1,9 @@
 INTRODUCTION	1	36,289
 RESULTS	2	303,146
+	Fig. 1. SR and IR.	3	36,414
 DISCUSSION	3	303,661
+	Fig. 2. Relationship between SR and ID across languages	4	36,477
+	Fig. 3. Pairwise divergence between languages.	5	36,249
 MATERIALS AND METHODS	6	36,464
 	Data	6	36,562
 	Statistical analysis	7	36,672
