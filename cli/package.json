@@ -1,0 +1,24 @@
+{
+  "name": "pdfoutliner",
+  "version": "0.1.0",
+  "type": "module",
+  "dependencies": {
+    "commander": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "esbuild": "^0.20.2",
+    "typescript": "^5.4.5",
+    "vitest": "^1.4.0"
+  },
+  "scripts": {
+    "postinstall": "cp -r ../mupdf/*.wasm dist",
+    "build": "tsc --noEmit && esbuild main.ts --bundle --platform=neutral --packages=external --outdir=dist --target=node20",
+    "watch": "tsc --noEmit && esbuild main.ts --bundle --platform=neutral --packages=external --outdir=dist --target=node20 --sourcemap=inline --watch",
+    "cli": "node dist/main.js",
+    "test": "vitest run"
+  },
+  "bin": {
+    "pdfoutliner": "dist/main.js"
+  }
+}

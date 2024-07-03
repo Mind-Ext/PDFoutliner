@@ -1,0 +1,10 @@
+INTRODUCTION	1	36,289
+RESULTS	2	303,146
+DISCUSSION	3	303,661
+MATERIALS AND METHODS	6	36,464
+	Data	6	36,562
+	Statistical analysis	7	36,672
+	Intraclass correlations for text, language, and speaker	7	303,58
+	Generalized additive models for location, scale, and shape	7	303,277
+	Unimodality	7	303,639
+	Pairwise distances between languages	8	36,519

@@ -1,0 +1,6 @@
+.vscode
+**/node_modules
+**/*local*
+*.js.map
+**/dist
+web/lib

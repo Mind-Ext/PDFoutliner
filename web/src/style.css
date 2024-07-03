@@ -1,0 +1,243 @@
+/* ---------- customize beercss theme ---------- */
+:root,
+body.light {
+	--primary: rgb(72 93 146);
+	--surface-tint: rgb(72 93 146);
+	--on-primary: rgb(255 255 255);
+	--primary-container: rgb(218 226 255);
+	--on-primary-container: rgb(0 24 71);
+	--secondary: rgb(88 94 113);
+	--on-secondary: rgb(255 255 255);
+	--secondary-container: rgb(220 226 249);
+	--on-secondary-container: rgb(21 27 44);
+	--tertiary: rgb(115 84 113);
+	--on-tertiary: rgb(255 255 255);
+	--tertiary-container: rgb(254 215 249);
+	--on-tertiary-container: rgb(43 18 44);
+	--error: rgb(186 26 26);
+	--on-error: rgb(255 255 255);
+	--error-container: rgb(255 218 214);
+	--on-error-container: rgb(65 0 2);
+	--background: rgb(250 248 255);
+	--on-background: rgb(26 27 33);
+	--surface: rgb(250 248 255);
+	--on-surface: rgb(26 27 33);
+	--surface-variant: rgb(225 226 236);
+	--on-surface-variant: rgb(68 70 79);
+	--outline: rgb(117 119 128);
+	--outline-variant: rgb(197 198 208);
+	--shadow: rgb(0 0 0);
+	--scrim: rgb(0 0 0);
+	--inverse-surface: rgb(47 48 54);
+	--inverse-on-surface: rgb(241 240 247);
+	--inverse-primary: rgb(177 197 255);
+	--primary-fixed: rgb(218 226 255);
+	--on-primary-fixed: rgb(0 24 71);
+	--primary-fixed-dim: rgb(177 197 255);
+	--on-primary-fixed-variant: rgb(48 69 120);
+	--secondary-fixed: rgb(220 226 249);
+	--on-secondary-fixed: rgb(21 27 44);
+	--secondary-fixed-dim: rgb(192 198 221);
+	--on-secondary-fixed-variant: rgb(64 70 89);
+	--tertiary-fixed: rgb(254 215 249);
+	--on-tertiary-fixed: rgb(43 18 44);
+	--tertiary-fixed-dim: rgb(225 187 221);
+	--on-tertiary-fixed-variant: rgb(90 61 89);
+	--surface-dim: rgb(218 217 224);
+	--surface-bright: rgb(250 248 255);
+	--surface-container-lowest: rgb(255 255 255);
+	--surface-container-low: rgb(244 243 250);
+	--surface-container: rgb(238 237 244);
+	--surface-container-high: rgb(232 231 239);
+	--surface-container-highest: rgb(226 226 233);
+}
+
+body.dark {
+	--primary: rgb(177 197 255);
+	--surface-tint: rgb(177 197 255);
+	--on-primary: rgb(23 46 96);
+	--primary-container: rgb(48 69 120);
+	--on-primary-container: rgb(218 226 255);
+	--secondary: rgb(192 198 221);
+	--on-secondary: rgb(42 48 66);
+	--secondary-container: rgb(64 70 89);
+	--on-secondary-container: rgb(220 226 249);
+	--tertiary: rgb(225 187 221);
+	--on-tertiary: rgb(65 39 66);
+	--tertiary-container: rgb(90 61 89);
+	--on-tertiary-container: rgb(254 215 249);
+	--error: rgb(255 180 171);
+	--on-error: rgb(105 0 5);
+	--error-container: rgb(147 0 10);
+	--on-error-container: rgb(255 218 214);
+	--background: rgb(18 19 24);
+	--on-background: rgb(226 226 233);
+	--surface: rgb(18 19 24);
+	--on-surface: rgb(226 226 233);
+	--surface-variant: rgb(68 70 79);
+	--on-surface-variant: rgb(197 198 208);
+	--outline: rgb(143 144 153);
+	--outline-variant: rgb(68 70 79);
+	--shadow: rgb(0 0 0);
+	--scrim: rgb(0 0 0);
+	--inverse-surface: rgb(226 226 233);
+	--inverse-on-surface: rgb(47 48 54);
+	--inverse-primary: rgb(72 93 146);
+	--primary-fixed: rgb(218 226 255);
+	--on-primary-fixed: rgb(0 24 71);
+	--primary-fixed-dim: rgb(177 197 255);
+	--on-primary-fixed-variant: rgb(48 69 120);
+	--secondary-fixed: rgb(220 226 249);
+	--on-secondary-fixed: rgb(21 27 44);
+	--secondary-fixed-dim: rgb(192 198 221);
+	--on-secondary-fixed-variant: rgb(64 70 89);
+	--tertiary-fixed: rgb(254 215 249);
+	--on-tertiary-fixed: rgb(43 18 44);
+	--tertiary-fixed-dim: rgb(225 187 221);
+	--on-tertiary-fixed-variant: rgb(90 61 89);
+	--surface-dim: rgb(18 19 24);
+	--surface-bright: rgb(56 57 63);
+	--surface-container-lowest: rgb(13 14 19);
+	--surface-container-low: rgb(26 27 33);
+	--surface-container: rgb(30 31 37);
+	--surface-container-high: rgb(40 42 47);
+	--surface-container-highest: rgb(51 52 58);
+}
+
+/* ---------- customize beercss ---------- */
+i {
+	overflow: visible;
+	/* show icon overflow */
+}
+
+button>input {
+	cursor: pointer;
+}
+
+/* ----------  ---------- */
+
+html,
+body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+main.responsive {
+	height: 100%;
+	width: 100%;
+}
+
+main>.grid {
+	height: 100%;
+	grid-template-rows: 100%;
+}
+
+.flex-col {
+	display: flex;
+	flex-direction: column;
+}
+
+.grid > .flex-col > * {
+	margin-top: 0.25rem;
+	margin-bottom: 0.25rem;
+}
+
+
+/* ------ the following modified from mupdf example ------ */
+
+#search-panel {
+	display: none;
+	justify-content: flex-end;
+}
+
+#dropzone {
+	height: 100%;
+}
+
+/* LAYOUT */
+#message {
+	text-align: center;
+	font-size: 24pt;
+	font-weight: bold;
+	color: silver;
+}
+
+/* PAGES */
+#page-panel {
+	flex-grow: 1;
+	overflow: scroll;
+	border: .1rem solid var(--outline);
+}
+
+#page-panel .pdfpage {
+	position: relative;
+	background-color: white;
+	margin: 16px 12px;
+	box-shadow: 0px 2px 8px #0004;
+	border-radius: unset;
+}
+
+#page-panel .pdfpage * {
+	position: absolute;
+}
+
+#page-panel .pdfpage canvas {
+	user-select: none;
+}
+
+#page-panel div.text span {
+	white-space: pre;
+	line-height: 1;
+	color: transparent;
+}
+
+#page-panel div.text ::selection {
+	background: hsla(220, 100%, 50%, 0.2);
+}
+
+#page-panel div.link a:hover {
+	border: 1px dotted blue;
+}
+
+#page-panel div.search>div {
+	pointer-events: none;
+	border: 1px solid hotpink;
+	background-color: lightpink;
+	mix-blend-mode: multiply;
+}
+
+/* ------ */
+
+#search-button {
+	display: none;
+}
+
+#outline-panel {
+	padding: 0;
+	flex-grow: 1;
+	overflow: hidden;
+}
+
+
+#outline-panel>.page {
+	display: flex;
+	flex-direction: column;
+	overflow: scroll;
+	height: calc(100% - 3rem);
+}
+
+.outline-row {
+	display: flex;
+	justify-content: space-between;
+	line-height: 1.8;
+}
+
+.outline-row>a {
+	margin-right: 0.5em;
+}
+
+.outline-row>a:hover {
+	text-decoration: underline;
+}

@@ -1,0 +1,40 @@
+Introduction	1	169,505
+Results	3	169,615
+	Existing approaches	3	169,637
+	Demixed principal component analysis (dPCA)	4	169,686
+	Somatosensory working memory task in monkey PFC	8	169,486
+	Visuospatial working memory task in monkey PFC	10	169,356
+	Olfactory discrimination task in rat OFC	11	169,598
+	Olfactory categorization task in rat OFC	13	169,136
+	Universal features of the PFC population activity	13	169,417
+Discussion	14	169,611
+	Relationship to other methods, including our earlier work	15	169,466
+	Limitations and future work	16	169,324
+Materials and methods	17	169,53
+	Mathematical notation	17	169,180
+	Marginalization procedure	17	169,381
+	Regularization	20	169,251
+	Unbalanced data	20	169,449
+	Missing data	22	169,53
+	Sequentially recorded data	22	169,273
+	Variance calculations	22	169,412
+	Demixing indices	23	169,426
+	Angles between dPCs	23	169,574
+	Experimental data	24	169,440
+	Selection of neurons	25	169,441
+	Preprocessing of the neural data	25	169,649
+	Cross-validation to select regularization parameter	26	169,311
+	Cross-validation to measure classification accuracy	27	169,422
+	Comparison of dPCA to PCA in each marginalization	28	169,431
+	Comparison of dPCA with targeted dimensionality reduction	29	169,621
+	Comparison of dPCA with LDA	30	169,350
+	Comparison of dPCA with previous versions	31	169,445
+	Appendix A. Mathematical properties of the marginalization procedure	33	169,53
+	Appendix B. Fourier-like components from temporal variations	33	169,640
+	Data and code	34	169,348
+Acknowledgements	34	169,436
+Additional information	34	169,532
+	Funding	34	169,590
+	Author contributions	34	169,668
+	Author ORCIDs	35	169,54
+References	35	169,108

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./src/document-svgrepo-com.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/beercss@3.5.1/dist/cdn/beer.min.css"
+      rel="stylesheet"
+    />
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/beercss@3.5.1/dist/cdn/beer.min.js"
+    ></script>
+    <link rel="stylesheet" href="./src/style.css" />
+    <script type="module" src="./src/viewer.js"></script>
+    <!-- var: viewer -->
+    <script type="module" src="./src/outline.js"></script>
+    <!-- var: store -->
+    <title>PDFoutliner</title>
+  </head>
+  <body>
+    <main class="responsive">
+      <div class="grid">
+        <div class="s12 m8 l8 flex-col">
+          <div class="row">
+            <button class="secondary">
+              <i>file_open</i>
+              <span>Open</span>
+              <input
+                id="file-input"
+                type="file"
+                accept=".pdf,application/pdf"
+                onchange="viewer.open_document_from_file(event.target.files[0])"
+              />
+            </button>
+            <div class="max"></div>
+            <button
+              id="search-button"
+              class="secondary"
+              onclick="viewer.toggle_search_panel()"
+              disabled
+            >
+              <i>find_in_page</i>
+              <span>Search</span>
+            </button>
+            <button
+              class="circle secondary"
+              onclick="viewer.zoom_in()"
+              title="Zoom In"
+            >
+              <i>zoom_in</i>
+            </button>
+            <button
+              class="circle secondary"
+              onclick="viewer.zoom_out()"
+              title="Zoom Out"
+            >
+              <i>zoom_out</i>
+            </button>
+            <button
+              class="circle secondary"
+              onclick="viewer.zoom_width()"
+              title="Fit Width"
+            >
+              <i>width</i>
+            </button>
+          </div>
+          <div id="search-panel" class="row top-margin">
+            <div id="search-status"></div>
+            <div class="field label prefix border round small">
+              <i>search</i>
+              <input id="search-input" type="text" />
+              <label>Search Text</label>
+            </div>
+            <button onclick="viewer.run_search(-1, 1)" class="circle secondary">
+              <i>arrow_back</i>
+            </button>
+            <button onclick="viewer.run_search(1, 1)" class="circle secondary">
+              <i>arrow_forward</i>
+            </button>
+            <button
+              onclick="viewer.toggle_search_panel(false)"
+              class="circle secondary"
+            >
+              <i>close</i>
+            </button>
+          </div>
+          <article id="page-panel" class="no-padding">
+            <div id="dropzone">
+              <div id="message" class="absolute center middle">Loading...</div>
+            </div>
+            <div id="pages">
+              <!-- pages inserted here -->
+            </div>
+          </article>
+        </div>
+        <div v-scope class="s12 m4 l4 flex-col">
+          <div class="row">
+            <div class="max"></div>
+            <button id="save-button">
+              <i>file_save</i>
+              <span>Save</span>
+            </button>
+          </div>
+          <article class="max scroll" id="outline-panel">
+            <div class="tabs">
+              <a
+                v-show="store.existingOutline.length"
+                v-on:click="store.showExtracted=false"
+                v-bind:class="{active: !store.showExtracted && store.existingOutline.length}"
+              >Existing</a>
+              <a
+                v-on:click="store.showExtracted=true"
+                v-bind:class="{active: store.showExtracted && store.existingOutline.length}"
+              >Extracted</a>
+            </div>
+            <div class="page padding"  v-bind:class="{active: !store.showExtracted}">
+              <div v-for="o in store.existingOutline" class="outline-row">
+                <a
+                  v-bind:href="'#page'+(o.page+1)"
+                  v-bind:style="{'marginLeft': o.level - 1 + 'em'}"
+                  >{{o.title}}</a
+                >
+                <div>{{o.page+1}}</div>
+              </div>
+            </div>
+            <div class="page padding" v-bind:class="{active: store.showExtracted}">
+              <div v-for="o in store.extractedOutline" class="outline-row">
+                <a
+                  v-bind:href="'#page'+o.page"
+                  v-bind:style="{'marginLeft': o.level - 1 + 'em'}"
+                  >{{o.text}}</a
+                >
+                <div>{{o.page}}</div>
+              </div>
+            </div>
+          </article>
+          <!-- implement as popup modal -->
+          <!-- <div class="row small-padding bottom-padding">
+            <div class="max"></div>
+            <button id="outline-button" onclick="{makeOutline}">
+              <i>account_tree</i>
+              <span>Reset</span>
+            </button>
+            <button id="edit-button">
+              <i>edit_note</i>
+              <span>Edit</span>
+            </button>
+            <button id="edit-button">
+              <i>save_as</i>
+              <span>Confirm</span>
+            </button>
+          </div> -->
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

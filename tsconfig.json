@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "esnext",
+        "moduleResolution": "Bundler",
+        "esModuleInterop": true,
+        "allowImportingTsExtensions": true,
+        "noEmit": true,
+        "strict": false,
+        "skipLibCheck": true,
+    },
+    "$schema": "https://json.schemastore.org/tsconfig"
+}

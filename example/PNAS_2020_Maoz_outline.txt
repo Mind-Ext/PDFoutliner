@@ -1,0 +1,13 @@
+Results	2	38,238
+Discussion	5	301,575
+Materials and Methods	6	296,545
+	Experimental Data.	6	296,557
+	Data Preprocessing.	7	43,107
+	Construction of RPs.	7	43,161
+	Training Probabilistic Models with Standard Gradient Descent.	7	43,332
+	Markov Chain Monte Carlo (MCMC) Sampling.	7	301,127
+	Training RP Models with the Learning Rule.	7	301,199
+	Training Models with Synaptic Pruning and Replacement.	7	301,340
+	RP Model.	7	301,440
+	Learning Rule.	7	301,512
+	Data Availability.	7	301,548
