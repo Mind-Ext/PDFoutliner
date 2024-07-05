@@ -3,7 +3,7 @@
 
 Automatically extract outline from software-generated PDF based on layout and text styles
 
-![](https://flat.badgen.net/npm/v/pdfoutliner?color=485d92)
+[![](https://flat.badgen.net/npm/v/pdfoutliner?color=485d92)](https://www.npmjs.com/package/pdfoutliner)
 
 #### CLI
 ```sh
