@@ -4,3 +4,5 @@
 *.js.map
 **/dist
 web/lib
+cli/README.md
+*.tgz

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import fs from 'fs'
 import { program } from 'commander'
 import * as mupdf from '../mupdf/mupdf.js'
@@ -17,8 +19,7 @@ program
   .argument('<inputFile>', 'input PDF file path')
   .argument(
     '[outputFile]',
-    'output file path, default to [inputFile]_outlined.pdf',
-    ''
+    'output file path (default to {inputFileName}_outlined.pdf)',
   )
   .option('-o, --output <format>', 'output format (pdf, txt, stdout)', 'pdf')
   .option(
@@ -31,15 +32,13 @@ program
   )
   .option(
     '-p, --params <params>',
-    'set parameters in the alorithm using comma separated key-value pairs e.g. -p MAX_LEVELS=1',
-    ''
+    'set parameters in the algorithm using comma separated key-value pairs e.g. -p MAX_LEVELS=1',
   )
   .option('--mark', `include "${MARK_TEXT}" as the first outline item`)
   .option('--verbosity <level>', 'set verbosity level', 'LOG')
   .action(main)
 
-if (import.meta.url.endsWith(process.argv[1])) {
-  // running from command line
+if (process.env.NODE_ENV !== 'test') {
   program.parse()
 }
 
@@ -47,7 +46,8 @@ export function main(inputFile, outputFile, options) {
   setVerbosity(options.verbosity)
 
   if (!inputFile.toLowerCase().endsWith('.pdf')) {
-    throw new Error('Input file must have .pdf extension')
+    logger.error('Input file must have .pdf extension')
+    process.exit(1)
   }
 
   if (options.params) {

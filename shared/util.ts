@@ -64,7 +64,6 @@ export function parseOutlineStr(content) {
     }
     outline.push(new OutlineItem(level, text, page, x, y))
   }
-  console.log(outline)
   return outline
 }
 
