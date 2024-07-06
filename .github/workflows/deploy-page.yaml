@@ -5,7 +5,7 @@ name: Deploy static content to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: [$default-branch]
+    branches: ['main']
     paths: ['web/**', 'shared/**', 'mupdf/**']
 
   # Allows you to run this workflow manually from the Actions tab
