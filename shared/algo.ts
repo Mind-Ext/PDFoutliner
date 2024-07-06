@@ -14,7 +14,7 @@ import {
 const params = {
   MAX_LEVELS: 3,
 
-  TOL_BIN_SIZE: 3, // tolerance of alignment
+  TOL_BIN_SIZE: 6, // tolerance of alignment
   TOL_JOIN_SPAN: 24, // tolerance of joining spans with same style on same line
   ALIGN_DECAY_RATE: 0.5,
   ALIGN_LEFT_RATIO: 0.6,
@@ -556,9 +556,6 @@ function structureOutline(outlineGroups) {
     if (!(span.styleStr in levels)) {
       levels[span.styleStr] = level
       level++
-    }
-    if (span.text.startsWith('Task #')) {
-      console.log(JSON.stringify(span, null, 2))
     }
     outline.push(
       new OutlineItem(
