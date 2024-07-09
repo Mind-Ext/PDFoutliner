@@ -75,15 +75,6 @@ class OutlineItem implements OutlineItemType {
     public x?: number,
     public y?: number
   ) {}
-
-  toString() {
-    const entries = [this.text, this.page]
-    if (this.y) {
-      const coordStr = this.x ? `${this.x},${this.y}` : this.y
-      entries.push(coordStr)
-    }
-    return '\t'.repeat(this.level - 1) + entries.join('\t')
-  }
 }
 
 class Column {

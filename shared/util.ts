@@ -38,7 +38,17 @@ export function findMode(arr: Array<number>): number {
 ////// PDF utils
 
 export function outlineToStr(outline: Array<OutlineItem>) {
-  return outline.map((outlineItem) => outlineItem.toString()).join('\n')
+  function toString(outlineItem) {
+    const entries = [outlineItem.text, outlineItem.page]
+    if (outlineItem.y) {
+      const coordStr = outlineItem.x
+        ? `${Math.round(outlineItem.x)},${Math.round(outlineItem.y)}`
+        : Math.round(outlineItem.y)
+      entries.push(coordStr)
+    }
+    return '\t'.repeat(outlineItem.level - 1) + entries.join('\t')
+  }
+  return outline.map((outlineItem) => toString(outlineItem)).join('\n')
 }
 
 export function parseOutlineStr(content) {
