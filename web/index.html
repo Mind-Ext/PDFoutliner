@@ -2,16 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="./src/document-svgrepo-com.svg" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="./src/document-svgrepo-com.svg"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       href="https://cdn.jsdelivr.net/npm/beercss@3.5.1/dist/cdn/beer.min.css"
       rel="stylesheet"
     />
-    <script
-      type="module"
-      src="https://cdn.jsdelivr.net/npm/beercss@3.5.1/dist/cdn/beer.min.js"
-    ></script>
     <link rel="stylesheet" href="./src/style.css" />
     <script type="module" src="./src/viewer.js"></script>
     <!-- var: viewer -->
@@ -97,6 +97,10 @@
         </div>
         <div v-scope class="s12 m4 l4 flex-col">
           <div class="row">
+            <button id="edit-button" v-if="store.docTitle" v-on:click="store.toggleModal">
+              <i>edit_note</i>
+              <span>Edit</span>
+            </button>
             <div class="max"></div>
             <button id="save-button">
               <i>file_save</i>
@@ -107,25 +111,39 @@
             <div class="tabs">
               <a
                 v-show="store.existingOutline.length"
-                v-on:click="store.showExtracted=false"
-                v-bind:class="{active: !store.showExtracted && store.existingOutline.length}"
-              >Existing</a>
+                v-on:click="store.showOutlineTab='existing'"
+                v-bind:class="{active: store.showOutlineTab === 'existing'}"
+                >Existing</a
+              >
               <a
-                v-on:click="store.showExtracted=true"
-                v-bind:class="{active: store.showExtracted && store.existingOutline.length}"
-              >Extracted</a>
+                v-on:click="store.showOutlineTab='extracted'"
+                v-bind:class="{active: store.showOutlineTab === 'extracted'}"
+              >Extracted</a
+              >
+              <a
+                v-show="store.editedOutline.length"
+                v-on:click="store.showOutlineTab='edited'"
+                v-bind:class="{active: store.showOutlineTab === 'edited'}"
+                >Edited</a
+              >
             </div>
-            <div class="page padding"  v-bind:class="{active: !store.showExtracted}">
+            <div
+              class="page padding"
+              v-bind:class="{active: store.showOutlineTab === 'existing'}"
+            >
               <div v-for="o in store.existingOutline" class="outline-row">
                 <a
                   v-bind:href="'#page'+(o.page+1)"
                   v-bind:style="{'marginLeft': o.level - 1 + 'em'}"
                   >{{o.text}}</a
                 >
-                <div>{{o.page+1}}</div>
+                <div>{{o.page}}</div>
               </div>
             </div>
-            <div class="page padding" v-bind:class="{active: store.showExtracted}">
+            <div
+              class="page padding"
+              v-bind:class="{active: store.showOutlineTab === 'extracted'}"
+            >
               <div v-for="o in store.extractedOutline" class="outline-row">
                 <a
                   v-bind:href="'#page'+o.page"
@@ -135,24 +153,63 @@
                 <div>{{o.page}}</div>
               </div>
             </div>
+            <div
+              class="page padding"
+              v-bind:class="{active: store.showOutlineTab === 'edited'}"
+            >
+              <div v-for="o in store.editedOutline" class="outline-row">
+                <a
+                  v-bind:href="'#page'+o.page"
+                  v-bind:style="{'marginLeft': o.level - 1 + 'em'}"
+                  >{{o.text}}</a
+                >
+                <div>{{o.page}}</div>
+              </div>
+            </div>
           </article>
-          <!-- implement as popup modal -->
-          <!-- <div class="row small-padding bottom-padding">
-            <div class="max"></div>
-            <button id="outline-button" onclick="{makeOutline}">
-              <i>account_tree</i>
-              <span>Reset</span>
-            </button>
-            <button id="edit-button">
-              <i>edit_note</i>
-              <span>Edit</span>
-            </button>
-            <button id="edit-button">
-              <i>save_as</i>
-              <span>Confirm</span>
-            </button>
-          </div> -->
         </div>
+        <dialog v-scope class="left modal" v-bind:class="{active: store.showModal}"">
+          <nav >
+            <button class="circle border" v-on:click="store.showModal=false">
+              <i>chevron_left</i>
+            </button>
+            <div class="max"></div>
+            <button
+              class="border"
+              v-show="store.existingOutline.length"
+              id="use-existing-button"
+            >Existing</button>
+            <button
+              class="border"
+              v-show="store.extractedOutline.length"
+              id="use-extracted-button"
+            >Extracted</button>
+            <button
+              v-on:click="store.setEditedOutline"
+            >Confirm</button>
+            
+          </nav>
+          <div class="field textarea border" id="outline-field">
+            <textarea
+              placeholder="Heading[Tab]Page&#10;[Tab]Subheading[Tab]Page"
+              v-model="store.outlineStr"></textarea>
+            </div>
+            <span>Each line is indented using [Tab] key and contains title, page number (and optionally x, y coordinates) separated by [Tab].</span>
+          <h6>Parameters</h6>
+          <div class="field textarea border">
+            <textarea
+              v-model="store.paramsStr"
+              rows="4"
+            ></textarea>
+          </div>
+          <div class="row">
+            <div class="max"></div>
+            <button class="border"
+              v-on:click="store.resetParams">Reset</button>
+            <button
+              v-on:click="store.applyParams">Apply</button>
+          </div>
+        </dialog>
       </div>
     </main>
   </body>

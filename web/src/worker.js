@@ -163,10 +163,14 @@ methods.drawPageAsPixmap = function (doc_id, page_number, dpi) {
   return imageData
 }
 
-methods.extractOutline = function (doc_id, params = shared.params) {
+methods.extractOutline = function (doc_id) {
   let doc = document_map[doc_id]
   let outline = shared.findOutline(doc)
   return outline
+}
+
+methods.updateParams = function (params) {
+  shared.updateParams(params)
 }
 
 methods.getOutline = function (doc_id) {

@@ -114,6 +114,10 @@ button>input {
 	cursor: pointer;
 }
 
+dialog {
+	max-inline-size: 60rem;
+}
+
 /* ----------  ---------- */
 
 html,
@@ -139,7 +143,7 @@ main>.grid {
 	flex-direction: column;
 }
 
-.grid > .flex-col > * {
+.grid>.flex-col>* {
 	margin-top: 0.25rem;
 	margin-bottom: 0.25rem;
 }
@@ -240,4 +244,36 @@ main>.grid {
 
 .outline-row>a:hover {
 	text-decoration: underline;
+}
+
+
+dialog {
+	display: flex;
+	flex-direction: column;
+	max-inline-size: 30rem;
+}
+
+dialog > nav, dialog > .row {
+	margin-top: -0.25rem;
+	padding-bottom: 0;
+}
+
+dialog > h6 {
+	font-size: 1.25rem;
+	margin-bottom: -0.5rem;
+}
+
+#outline-field {
+	flex-grow: 1;
+	margin-top: 0.5rem;
+}
+
+.field.textarea {
+	block-size: auto;
+	margin-block-end: 0.5rem;
+}
+
+textarea {
+	white-space: pre;
+	tab-size: 4;
 }

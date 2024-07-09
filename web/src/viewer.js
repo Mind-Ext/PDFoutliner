@@ -637,7 +637,8 @@ async function open_document_from_buffer(buffer, magic, title) {
   }
 
   zoomWidthFirstPage()
-  await getOutlines(current_doc)
+  await getOutline()
+  await extractOutline()
 
   current_search_needle = ''
   current_search_page = 0
@@ -710,22 +711,36 @@ function initDropzone() {
   dropzone.style.cursor = 'pointer'
 }
 
-
-async function getOutlines(current_doc) {
+async function getOutline() {
   let existingOutline = await worker.getOutline(current_doc)
 
   window.store.existingOutline = existingOutline
-  if (existingOutline.length) {
-    window.store.showExtracted = false
+  // if (existingOutline.length) {
+  //   window.store.showOutlineTab = 'existing'
+  // }
+}
+
+async function extractOutline(params = null) {
+  if (params) {
+    await worker.updateParams(params)
   }
+  console.log('extractOutline')
   const outline = await worker.extractOutline(current_doc)
-  await worker.setOutline(current_doc, outline)
   window.store.extractedOutline = outline
+  window.store.showOutlineTab = 'extracted'
 }
 
 async function saveFile() {
+  let outline = window.store.editedOutline.length
+    ? window.store.editedOutline
+    : window.store.extractedOutline
+  outline = JSON.parse((JSON.stringify(outline)))
+  // get around the proxy
+  await worker.setOutline(current_doc, outline)
   const blobData = await worker.saveToBuffer(current_doc)
-  const url = URL.createObjectURL(new Blob([blobData]), { type: 'application/pdf' })
+  const url = URL.createObjectURL(new Blob([blobData]), {
+    type: 'application/pdf',
+  })
   const a = document.createElement('a')
   a.href = url
   a.download = window.store.docTitle.replace(/\.pdf$/i, '_outlined.pdf')
@@ -747,4 +762,5 @@ window.viewer = {
   close_document,
   handleDrop,
   handleDragOver,
+  extractOutline
 }
