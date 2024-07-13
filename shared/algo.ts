@@ -130,9 +130,9 @@ function _processSpans(spans: Array<Span>) {
   return [processedSpans, mainStyle]
 }
 
-function groupTextByStyle(pageDicts): StyleGroups {
+function groupTextByStyle(pageDicts): [StyleGroups, string] {
   const styleGroups = new Map()
-
+  const styleArea = new Map()
   for (let iPage = 0; iPage < pageDicts.length; iPage++) {
     const pageDict = pageDicts[iPage]
     for (let iBlock = 0; iBlock < pageDict.blocks.length; iBlock++) {
@@ -143,6 +143,23 @@ function groupTextByStyle(pageDicts): StyleGroups {
       const [spans, mainStyle] = _processSpans(block.lines)
       block.spans = spans
       delete block.lines
+      
+      block.mainStyleStr = mainStyle
+      const ys = new Set(Array.from(block.spans, (span: MySpan) => span.y))
+      block.nLines = ys.size
+
+      // if (block.nLines === 1 && iBlock > 0) {
+      //   const prevBlock = pageDict.blocks[iBlock - 1]
+      //   const matchStyle = block.mainStyleStr === prevBlock.mainStyleStr
+      //   const isXAligned = prevBlock.bbox.x === block.bbox.x || 
+      //     prevBlock.bbox.x + prevBlock.bbox.w === block.bbox.x + block.bbox.w
+      //   const isYEqual = prevBlock.bbox.y === block.bbox.y
+      //   const isClose = block.bbox.y - (prevBlock.bbox.y + prevBlock.bbox.h) <= block.bbox.h * 2
+      //   // spacing between two blocks (lines), e.g. double spacing
+      //   if (matchStyle && isXAligned && isYEqual && isClose) {
+      //     // merge block
+      //   }
+      // }
 
       for (const span of block.spans) {
         span.iPage = iPage
@@ -155,47 +172,49 @@ function groupTextByStyle(pageDicts): StyleGroups {
         iSpan++
       }
 
-      block.mainStyleStr = mainStyle
-      const ys = new Set(Array.from(block.spans, (span: MySpan) => span.y))
-      block.nLines = ys.size
+
+      if (!styleArea.has(mainStyle)) {
+        styleArea.set(mainStyle, 0)
+      }
+      styleArea.set(
+        mainStyle,
+        styleArea.get(mainStyle) + block.bbox.w * block.bbox.h
+      )
     }
   }
-  return styleGroups
+  const [mainStyle, mainStyleArea] = util.findMaxKV(styleArea)
+  return [styleGroups, mainStyle]
 }
 
-function findColumns(pageDicts: Array<PageDict>): Array<Column> {
+function findColumns(mainGroup: Array<MySpan>): Array<Column> {
   const columnMap = new Map()
 
-  for (const pageDict of pageDicts) {
-    for (const block of pageDict.blocks) {
-      if (block.nLines < 5) continue
-      const xLeft = block.bbox.x
-      const xMid = Math.round(block.bbox.x + block.bbox.w / 2)
-      const xLeftBin = util.roundToBin(xLeft, params.TOL_BIN_SIZE)
-      const xMidBin = util.roundToBin(xMid, params.TOL_BIN_SIZE)
-      const column = new Column(xLeftBin, xMidBin)
-      const columnStr = column.toString()
+  for (const span of mainGroup) {
+    const xLeft = span.x
+    const xMid = Math.round(span.x + span.w / 2)
+    const xLeftBin = util.roundToBin(xLeft, params.TOL_BIN_SIZE)
+    const xMidBin = util.roundToBin(xMid, params.TOL_BIN_SIZE)
+    const column = new Column(xLeftBin, xMidBin)
+    const columnStr = column.toString()
 
-      const currColumn = columnMap.get(columnStr)?.column
-      if (currColumn) {
-        column.x0 = Math.min(block.bbox.x, currColumn.x0)
-        column.x1 = Math.max(block.bbox.w + block.bbox.x, currColumn.x1)
-        column.y0 = Math.min(block.bbox.y, currColumn.y0)
-        column.y1 = Math.max(block.bbox.h + block.bbox.y, currColumn.y1)
-      } else {
-        column.x0 = block.bbox.x
-        column.x1 = block.bbox.w + block.bbox.x
-        column.y0 = block.bbox.y
-        column.y1 = block.bbox.h + block.bbox.y
-      }
-
-      columnMap.set(columnStr, {
-        column,
-        totalSize:
-          block.bbox.w * block.bbox.h + columnMap.get(columnStr)?.totalSize ||
-          0,
-      })
+    const currColumn = columnMap.get(columnStr)?.column
+    if (currColumn) {
+      column.x0 = Math.min(span.x, currColumn.x0)
+      column.x1 = Math.max(span.w + span.x, currColumn.x1)
+      column.y0 = Math.min(span.y, currColumn.y0)
+      column.y1 = Math.max(span.h + span.y, currColumn.y1)
+    } else {
+      column.x0 = span.x
+      column.x1 = span.w + span.x
+      column.y0 = span.y
+      column.y1 = span.h + span.y
     }
+
+    columnMap.set(columnStr, {
+      column,
+      totalSize:
+        span.w * span.h + columnMap.get(columnStr)?.totalSize || 0,
+    })
   }
 
   const columnLengthsItems = Array.from(columnMap.values()).sort(
@@ -326,11 +345,12 @@ function findAlignedGroups(styleGroups: StyleGroups, columns) {
 /**
  * filter out groups that are unlikely to be headings
  */
-function filterGroups(styleGroups: StyleGroups, pageDicts, alignmentScores) {
-  const styleGroupLengths = new Map(
-    Array.from(styleGroups).map(([k, v]) => [k, v.length])
-  )
-  const [mainStyle, _mainGroupArea] = util.findMaxKV(styleGroupLengths)
+function filterGroups(
+  styleGroups: StyleGroups,
+  pageDicts,
+  mainStyle,
+  alignmentScores
+) {
   const mainFontSize = Number(mainStyle.split('_')[0])
   const filters = {
     tooFewLines: (style, group) => {
@@ -407,8 +427,9 @@ function _splitAllCapGroups(outlineGroups) {
     const allCapSpans: Array<MySpan> = []
     const normalSpans: Array<MySpan> = []
     for (const span of spans) {
-      if (span.text.length > 5 && span.text === span.text.toUpperCase()) {
-        // param, prevent abbreviations being counted
+      const letterLength = span.text.length - span.text.replace(/[a-z]/gi, '').length
+      if (letterLength > 5 && span.text === span.text.toUpperCase()) {
+        // param, prevent abbreviations and non-letters being counted
         allCapSpans.push(span)
       } else {
         normalSpans.push(span)
@@ -584,9 +605,9 @@ function findOutline(doc) {
     return { width, height, ...JSON.parse(sText.asJSON()) }
   }) as Array<PageDict>
 
-  const styleGroups = groupTextByStyle(pageDicts)
+  const [styleGroups, mainStyle] = groupTextByStyle(pageDicts)
 
-  const columns = findColumns(pageDicts)
+  const columns = findColumns(styleGroups.get(mainStyle))
 
   filterSpansPre(styleGroups, columns)
 
@@ -595,7 +616,7 @@ function findOutline(doc) {
     columns
   )
 
-  filterGroups(outlineGroups, pageDicts, alignmentScores)
+  filterGroups(outlineGroups, pageDicts, mainStyle, alignmentScores)
   processStyleGroups(outlineGroups, pageDicts)
 
   filterSpansPost(outlineGroups, pageDicts, columns)
