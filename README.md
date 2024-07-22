@@ -1,7 +1,9 @@
 
 ### PDFoutliner
 
-Automatically extract outline from software-generated PDF based on layout and text styles
+Automatically extract outlines from software-generated PDF documents based on layout and text styles
+
+Work in progress to improve the algorithm and add more test examples
 
 [![](https://flat.badgen.net/npm/v/pdfoutliner?color=485d92)](https://www.npmjs.com/package/pdfoutliner)
 
@@ -33,7 +35,6 @@ pdfoutliner example.pdf --fromtxt
 
 [**Demo**](https://mind-ext.github.io/PDFoutliner)
 
-(Work in progress. Seem to have issue on large files.)
 
 #### Motivation
 
