@@ -1,9 +1,10 @@
 {
   "type": "module",
   "scripts": {
-    "build": "cp -r ../mupdf lib && esbuild ./src/shared.ts --outdir=lib --bundle --format=esm"
+    "build": "cp -r ../mupdf lib && esbuild ./src/shared.ts --outdir=lib --bundle --format=esm",
+    "watch": "esbuild ./src/shared.ts --outdir=lib --bundle --format=esm --watch"
   },
   "devDependencies": {
-    "esbuild": "^0.21.0"
+    "esbuild": "^0.25.3"
   }
 }
