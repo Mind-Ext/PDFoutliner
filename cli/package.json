@@ -18,7 +18,7 @@
     "@types/node": "^20.12.7",
     "esbuild": "^0.25.3",
     "typescript": "^5.4.5",
-    "vitest": "^1.6.1"
+    "vitest": "^3.1.2"
   },
   "scripts": {
     "build": "cp -r ../mupdf/*.wasm dist && tsc --noEmit && esbuild main.ts --bundle --platform=neutral --packages=external --outdir=dist --target=node20 && cp ../README.md ./",
