@@ -15,10 +15,10 @@
     "commander": "^12.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.12.7",
-    "esbuild": "^0.25.3",
-    "typescript": "^5.4.5",
-    "vitest": "^3.1.2"
+    "@types/node": "^20.19.43",
+    "esbuild": "^0.25.12",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.7"
   },
   "scripts": {
     "build": "cp -r ../mupdf/*.wasm dist && tsc --noEmit && esbuild main.ts --bundle --platform=neutral --packages=external --outdir=dist --target=node20 && cp ../README.md ./",
